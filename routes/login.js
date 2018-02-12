@@ -11,8 +11,7 @@ exports.post = function(req, res, next) {
     var password = req.body.logpassword;
     log.info(email);
     log.info(password);
-    User.authorize(email, password, function(err, user) {
-        console.log('in error auth1');
+    User.authorize(null, email, password, function(err, user) {
         if (err) {
             console.log('in error auth');
             if (err instanceof AuthError) {
@@ -22,8 +21,10 @@ exports.post = function(req, res, next) {
             }
         }
         log.debug('mistake was not found');
-     //   req.session.user = user.name;
-        res.send({});
+        console.log(req.session)
+        req.session.user = user;
+        log.debug(req.session.user)
+        res.render('cabinet', { title: 'Avra', user: req.session.user});
 
     });
 }

@@ -1,12 +1,12 @@
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
+var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler')
 var app = express();
 var mongoose = require('lib/mongoose');
-var session = require('express-session');
 var config = require('config');
 var log = require('lib/log')(module)
 
@@ -26,17 +26,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('middleware/sendHttpError'))
-
+//
 app.use(session({
     secret: config.get('session:secret'),
     resave: true,
     saveUninitialized: true,
-    cookie: config.get('session: coockie'),
+      // maxAge: config.get('session: maxAge'),
     store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
 
+//app.use(require('middleware/loadUser'));
 
-require('routes')(app)
+
+require('routes')(app);
+
 
 
 //error handler

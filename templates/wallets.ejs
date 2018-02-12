@@ -1,12 +1,14 @@
     <% include ./partials/head %>
     <% include ./layout/page %>
-<h3>Congratulations!</h3>
+<h3>Your addresses</h3>
+<p><%=address %></p>
 
-<form method="POST" action="/generate">
-    <fieldset>
-        <legend>Your wallet has been created. The address is</legend>
-        <legend><%=wallet.public %></legend>
+    <!--<h3>Congratulations!</h3>-->
+<!--<form method="POST" action="/generate">-->
+    <!--<fieldset>-->
+        <!--<legend>Your wallet has been created. The address is</legend>-->
 
-    </fieldset>
+
+    <!--</fieldset>-->
 </form>
     <% include ./partials/footer %>

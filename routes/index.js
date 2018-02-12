@@ -21,12 +21,16 @@ module.exports = function(app) {
     app.post('/login', require('./login').post);
     //redirect to registration page
     app.get('/registration', require('./registration').get);
+    //filling registration form
+    app.post('/registration', require('./registration').post);
     //redirect to logout page
     app.post('/logout', require('./logout').post);
+    //redirect to cabinet page
+    app.get('/cabinet', require('./cabinet').get);
+   // redirect to wallets page
+    app.get('/wallets', require('./wallet').get);
+    // // filling login form
+    // app.post('/login', require('./login').post);
 
-    //
-    // app.post('/logout', require('./logout').post);
-    //
-    // app.get('/chat', checkAuth, require('./chat').get);
 
 };

@@ -35,7 +35,7 @@ function createUsers(callback) {
             {name: 'Zildjian', email: 'aranvic@inet.ua', password: 'salted'},
             {name: 'Petya', email: 'araasdic@inet.ua', password: 'swdwlted'},
             {name: 'Yura', email: 'araas34dic@inet.ua', password: 'swewedwlted'},
-            {name: 'Sonya', email: 'arassdic@inet.ua', password: 'swsdwlted'}
+            {name: 'Sonya', email: 'arhanechka@gmail.com', password: '1111'}
         ];
             async.each(users, function (userData, callback) {
                 var user = new mongoose.models.User(userData);

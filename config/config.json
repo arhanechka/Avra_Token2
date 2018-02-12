@@ -7,11 +7,8 @@
   "secret": "tooSimpleServer",
   "session": {
     "secret": "tooSimpleServer",
-    "cookie": {
-      "path": "/",
-      "httpOnly": true,
-      "maxAge": null
-    }
+    "maxAge": null
+
 
   }
   }

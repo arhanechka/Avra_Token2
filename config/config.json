@@ -1,0 +1,18 @@
+{
+  "portConfig": 3000,
+  "mongoose": {
+    "uri": "mongodb://localhost:27017/avra_test",
+    "useMongoClient": true
+     },
+  "secret": "tooSimpleServer",
+  "session": {
+    "secret": "tooSimpleServer",
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "maxAge": null
+    }
+
+  }
+  }
+

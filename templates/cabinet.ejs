@@ -1,0 +1,14 @@
+    <% include ./partials/head %>
+    <% include ./layout/page %>
+
+<h3>Welcome, <%=user.name %>!</h3>
+
+
+<form method="POST" action="/generate">
+    <fieldset>
+        <legend>Generate new wallet</legend>
+
+        <button type="submit" class="btn btn-primary">Generate</button>
+    </fieldset>
+</form>
+    <% include ./partials/footer %>

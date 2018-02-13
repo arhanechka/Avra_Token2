@@ -34,6 +34,28 @@ module.exports = function (app) {
             }
         })
     });
+
+    app.put('/user/:userId', function (req, res, next) {
+    // Update a user identified by the userId in the request
+        var userId = req.session.user._id;
+        User.findById(userId, function (err, user) {
+            if (err) {
+                res.status(500).send({message: "Could not find a user with id " + req.params.userId});
+            }
+
+            user.name = req.body.name;
+            user.email = req.body.email;
+            user.pass = req.body.pass;
+
+            user.save(function (err, data) {
+                if (err) {
+                    res.status(500).send({message: "Could not update user with id " + req.params.userId});
+                } else {
+                    res.json({message: "User successfully updated!", data});
+                }
+            });
+        });
+    });
 };
 
 //module.exports = router;

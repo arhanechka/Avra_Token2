@@ -1,17 +1,4 @@
 
-var log = require('lib/log')(module)
-// module.exports = function (app) {
-//
-// /* GET home page. */
-// app.get('/', function(req, res, next) {
-//   res.render('index', { title: 'Avra'});
-// });
-//
-// app.get('/t', function(req, res, next) {
-//     log.debug('test')
-//     res.end('test');
-// });
-// }
 module.exports = function(app) {
     //redirect to index page
     app.get('/', require('./frontpage').get);
@@ -31,4 +18,13 @@ module.exports = function(app) {
     app.get('/wallets', require('./wallet').get);
     // create new wallet
     app.post('/wallets', require('./wallet').post);
+    // TODO update and delete user and wallet
+    // Update a User with userId
+    // app.put('/users/:userId', users.update);
+    // // Delete a User with userId
+    // app.delete('/users/:userId', users.delete);
+    // // Update a Wallet with walletId
+    // app.put('/wallet/:walletId', wallet.update);
+    // // Delete a Wallet with walletId
+    // app.delete('/wallet/:walletId', wallet.delete);
 };

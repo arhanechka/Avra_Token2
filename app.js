@@ -6,17 +6,17 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler')
 var app = express();
-var mongoose = require('lib/mongoose');
-var config = require('config');
-var log = require('lib/log')(module)
+var mongoose = require('./lib/mongoose');
+var config = require('./config');
+var log = require('./lib/log')(module)
 
 var MongoStore = require('connect-mongo')(session)
 // view engine setup
 app.engine('ejs', require('ejs-mate'));
 app.set('views', path.join(__dirname, 'templates'));
 app.set('view engine', 'ejs');
-var HttpError = require('error/httpError').HttpError;
-var AuthError = require('error/authError').AuthError;
+var HttpError = require('./error/httpError').HttpError;
+var AuthError = require('./error/authError').AuthError;
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(require('middleware/sendHttpError'))
+app.use(require('./middleware/sendHttpError'))
 //
 app.use(session({
     secret: config.get('session:secret'),
@@ -34,11 +34,13 @@ app.use(session({
       // maxAge: config.get('session: maxAge'),
     store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
+app.get('/', function(req, res) {
+    res.json({message :'Page under construction.'});
+});
+app.use(require('./middleware/loadUser'));
 
-app.use(require('middleware/loadUser'));
 
-
-require('routes')(app);
+require('./routes')(app);
 
 
 

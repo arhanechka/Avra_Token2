@@ -1,4 +1,4 @@
-var User = require('models/user');
+var User = require('../models/user');
 var log = require('../lib/log')(module)
 
 module.exports = function (req, res, next) {

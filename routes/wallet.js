@@ -1,6 +1,6 @@
-var log = require('lib/log')(module)
-var web3 = require('lib/web3');
-var Wallet = require('models/wallet');
+var log = require('../lib/log')(module)
+var web3 = require('../lib/web3');
+var Wallet = require('../models/wallet');
 var async = require('async');
 
 

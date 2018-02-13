@@ -1,7 +1,7 @@
-var log = require('lib/log')(module);
-var User = require('models/user');
-var HttpError = require('error/httpError').HttpError;
-var AuthError = require('error/authError').AuthError;
+var log = require('../lib/log')(module);
+var User = require('../models/user');
+var HttpError = require('../error/httpError').HttpError;
+var AuthError = require('../error/authError').AuthError;
 
 exports.get  = function(req, res) {
     res.render('login', { title: 'Avra'});

@@ -4,6 +4,12 @@
     "uri": "mongodb://localhost:27017/avra_test",
     "useMongoClient": true
      },
+  "test": {
+    "database": "mongodb://localhost/avra-rest-server-test"
+  },
+  "default": {
+    "database": "mongodb://localhost/avra-rest-server"
+  },
   "secret": "tooSimpleServer",
   "session": {
     "secret": "tooSimpleServer",

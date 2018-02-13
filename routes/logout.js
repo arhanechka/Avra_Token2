@@ -1,4 +1,4 @@
-var log = require('lib/log')(module)
+var log = require('../lib/log')(module)
 
 exports.post = function (req, res) {
     //console.log();

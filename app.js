@@ -35,7 +35,7 @@ app.use(session({
     store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
 
-//app.use(require('middleware/loadUser'));
+app.use(require('middleware/loadUser'));
 
 
 require('routes')(app);

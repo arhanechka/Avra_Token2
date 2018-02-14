@@ -19,7 +19,9 @@ chai.use(chaiHttp);
 //Our parent block
 describe('users', () => {
     before((done) => { //Before each test we empty the database
+
         User.remove({}, (err) => {
+
             console.log("If the user removed with error" +err)
             Wallet.remove({}, (err) => {
                 done();

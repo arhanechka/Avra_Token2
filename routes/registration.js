@@ -10,7 +10,7 @@ exports.get  = function(req, res) {
 exports.post = function(req, res, next) {
     var name = req.body.name;
     var email = req.body.email;
-    var password = req.body.pass;
+    var password = req.body.password;
     log.info(name);
     log.info(email);
     log.info(password);

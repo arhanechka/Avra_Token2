@@ -1,46 +1,94 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt-nodejs');
+var mongoose = require('../lib/mongoose');
+var util = require('util');
+var crypto = require('crypto');
+var async = require('async');
+var log = require('../lib/log')(module)
+var AuthError = require('../error/authError').AuthError;
 
-var UserSchema = new Schema({
-  email: {
-        type: String,
-        unique: true,
-        required: true
-    },
-  password: {
-        type: String,
-        required: true
-    }
+
+Schema = mongoose.Schema;
+var schema = new Schema({
+    id: {type: String, required: false},
+    name: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
+    hashedPassword: {type: String, required: true},
+    salt: {type: String, required: true},
+}, {
+    timestamps: true,
+    versionKey: false
 });
 
-UserSchema.pre('save', function (next) {
-    var user = this;
-    if (this.isModified('password') || this.isNew) {
-        bcrypt.genSalt(10, function (err, salt) {
-            if (err) {
-                return next(err);
-            }
-            bcrypt.hash(user.password, salt, null, function (err, hash) {
-                if (err) {
-                    return next(err);
-                }
-                user.password = hash;
-                next();
-            });
-        });
-    } else {
-        return next();
-    }
-});
 
-UserSchema.methods.comparePassword = function (passw, cb) {
-    bcrypt.compare(passw, this.password, function (err, isMatch) {
-        if (err) {
-            return cb(err);
-        }
-        cb(null, isMatch);
-    });
+schema.methods.encryptPassword = function (password) {
+    return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
 };
 
-module.exports = mongoose.model('User', UserSchema);
+schema.virtual('password')
+    .set(function (password) {
+        this._plainPassword = password;
+        this.salt = Math.random() + '';
+        console.log(this.salt)
+        console.log(password)
+
+        this.hashedPassword = this.encryptPassword(password);
+    })
+    .get(function () {
+        return this._plainPassword;
+    });
+
+
+schema.methods.checkPassword = function (password) {
+    return this.encryptPassword(password) === this.hashedPassword;
+};
+schema.statics.authorize = function (name, email, password, callback) {
+    console.log('here')
+    var User = this;
+    console.log(name + "name on 1 stage")
+    async.waterfall([
+        function (callback) {
+            console.log('in stage 1 password' + password)
+            User.findOne({email: email}, callback);
+        },
+        function (user, callback) {
+            if (user) {
+                console.log(user)
+                console.log(name + " checking if it is reg or log")
+                if (name != null) {
+                    log.debug("Such user is exist in database")
+                    callback(new AuthError("User with " + email + " is exist in database"));
+                }
+                else {
+                    if (user.checkPassword(password)) {
+                        callback(null, user);
+                    } else {
+                        callback(new AuthError("Password is wrong"));
+                    }
+                }
+            }
+            else if (name == null) {
+                console.log("final")
+                console.log("final name" +name)
+                callback(new AuthError("Wrong email or such user does not exist"));
+               // callback("Wrong email or such user does not exist");
+            }
+            else {
+                log.debug('in registration stage')
+                console.log(password)
+                var user = new User({name: name, email: email, password: password});
+                console.log(user);
+                user.save(function (err) {
+                    if (err)
+                        log.debug(err)
+                    return callback(err);
+                    callback(null, user);
+                });
+            }
+
+        }
+    ], callback);
+};
+
+
+module.exports = mongoose.model('User', schema);
+
+

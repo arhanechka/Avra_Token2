@@ -2,28 +2,40 @@ var log = require('../lib/log')(module)
 var web3 = require('../lib/web3');
 var Wallet = require('../models/wallet');
 var async = require('async');
+var express = require('express');
+var router = express.Router();
 
-
-exports.get  = function(req, res, next) {
-    var userId = req.session.user._id;
+router.post('/wallets', function(req, res, next) {
+    // var userId = req.session.user._id;
+    var userId = req.body.id;
     log.debug(userId);
     Wallet.find({userId: userId}, (err, wallets)=>{
      if(err){
-         return next(new HttpError(404, "No existing wallets in database"));
+        res.send({
+            success: false,
+            msg: "No wallets or mistake"
+        })
+         // return next(new HttpError(404, "No existing wallets in database"));
      } else {
         log.debug(wallets);
-         req.session.wallets = wallets;
-         res.json(wallets);
+       //  req.session.wallets = wallets;
+       //  res.json(wallets);
+         res.json({
+             success: true,
+             msg: wallets
+         });
         //res.render('wallets', {title: 'Avra', address: addresses});
      }
     });
-};
+});
 
-exports.post = async function(req, res, next) {
+router.post('/newWallet', async function(req, res, next) {
     // Create and Save a new Wallet
-    var userId = req.session.user._id;
-    log.debug("That is req.session.userId"+userId);
-    var userPas = req.session.user.hashedPassword;
+    var userId = req.body.id;
+    // var userId = req.session.user._id;
+    log.debug("That is req.session.userId"+ userId);
+    // var userPas = req.session.user.hashedPassword;
+    var userPas = req.body.pass;
     log.debug("That is req.session.userPass"+userPas);
     var req_public = await web3.eth.personal.newAccount(userPas);
 
@@ -43,7 +55,8 @@ exports.post = async function(req, res, next) {
           //  res.render('wallets.ejs')
         }
     });
-};
+});
+module.exports = router;
 
 //exports.post = function(req, res, next) {
 //     // Create and Save a new Wallet
@@ -76,3 +89,4 @@ exports.post = async function(req, res, next) {
 //         })}
 //         ], callback);
 // };
+module.exports = router;

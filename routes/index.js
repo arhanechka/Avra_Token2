@@ -18,6 +18,7 @@ module.exports = function(app) {
     app.get('/wallets', require('./wallet').get);
     // create new wallet
     app.post('/wallets', require('./wallet').post);
+    app.get('/users', require('./users').get);
     // TODO update and delete user and wallet
     // Update a User with userId
     // app.put('/users/:userId', users.update);

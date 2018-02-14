@@ -5,9 +5,12 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler')
+var userRoute = require('./routes/user');
+var walletRoute = require('./routes/wallet');
+
 var app = express();
 var mongoose = require('./lib/mongoose');
-var config = require('./config');
+var config = require('./config/config');
 var log = require('./lib/log')(module)
 
 var MongoStore = require('connect-mongo')(session)
@@ -15,6 +18,11 @@ var MongoStore = require('connect-mongo')(session)
 app.engine('ejs', require('ejs-mate'));
 app.set('views', path.join(__dirname, 'templates'));
 app.set('view engine', 'ejs');
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 var HttpError = require('./error/httpError').HttpError;
 var AuthError = require('./error/authError').AuthError;
 
@@ -26,20 +34,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('./middleware/sendHttpError'))
-//
+app.use('/user', userRoute);
+app.use('/wallet', walletRoute);
 app.use(session({
-    secret: config.get('session:secret'),
+    secret: 'arhanechka',
     resave: true,
     saveUninitialized: true,
       // maxAge: config.get('session: maxAge'),
     store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
-app.get('/', function(req, res) {
-    res.json({message :'Page under construction.'});
-});
+
 app.use(require('./middleware/loadUser'));
-
-
 require('./routes')(app);
 
 

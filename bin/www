@@ -3,8 +3,8 @@
 /**
  * Module dependencies.
  */
-var config = require('config');
-var log = require('lib/log')(module)
+var config = require('../config/config');
+var log = require('../lib/log')(module)
 
 var app = require('../app');
 var debug = require('debug')('screen:server');

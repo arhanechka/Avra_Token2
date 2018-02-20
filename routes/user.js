@@ -1,12 +1,17 @@
+var passport = require('passport');
+var config = require('../config/config').get(process.env.NODE_ENV);
+require('../config/passport')(passport);
+var jwt = require('jsonwebtoken');
 var log = require('../lib/log')(module);
 var User = require('../models/user');
 var HttpError = require('../error/httpError').HttpError;
 var AuthError = require('../error/authError').AuthError;
+var getToken = require('../lib/token')
 var express = require('express');
 var router = express.Router();
 
 
-router.post('/signin', function(req, res) {
+router.post('/signin', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     log.info(email);
@@ -18,9 +23,7 @@ router.post('/signin', function(req, res) {
         });
     }
     else {
-        User.authorize(null, email, password, function(err, user) {
-
-
+        User.authorize(null, email, password, function (err, user) {
             if (err) {
                 res.json({
                     success: false,
@@ -30,18 +33,25 @@ router.post('/signin', function(req, res) {
             }
             else {
                 log.debug('mistake was not found');
+                log.debug('user found ' +user._id);
+                var payload = user._id.toString();
+                console.log("payload "+payload)
+                var token = jwt.sign(payload, config.secret);
+                // return the information including token as JSON
                 res.json({
                     success: true,
                     msg: 'Congratulations! You are in',
-                    username: user.name
+                    username: user.name,
+                    token: 'JWT ' + token
                 });
             }
             //   res.render('cabinet', { title: 'Avra', user: req.session.user});
 
-        });}
+        });
+    }
 });
 
-router.post('/signup', function(req, res, next) {
+router.post('/signup', function (req, res, next) {
     var name = req.body.name;
     var email = req.body.email;
     var password = req.body.password;
@@ -55,7 +65,7 @@ router.post('/signup', function(req, res, next) {
         });
     }
     else {
-        User.authorize(name, email, password, function(err, user) {
+        User.authorize(name, email, password, function (err, user) {
             if (err) {
                 console.log('in error auth');
                 if (err instanceof AuthError) {
@@ -78,6 +88,35 @@ router.post('/signup', function(req, res, next) {
                 msg: "Success! You have been registred",
                 success: true
             })
-        });}
+        });
+    }
 });
+
+/* GET users listing. */
+router.get('/users', passport.authenticate('jwt', {
+    session: false
+}), function (req, res, next) {
+    log.debug("before users search");
+    var token = getToken(req.headers);
+    log.debug(token);
+    if (token) {
+        User.find(function (err, users) {
+            if (err) {
+                console.log(err);
+                return next(err)
+            }
+            else
+                res.json(users)
+        })
+
+    }
+    else {
+        return res.status(403).send({
+            success: false,
+            msg: 'Unauthorized.'
+        });
+    }
+});
+
+
 module.exports = router;

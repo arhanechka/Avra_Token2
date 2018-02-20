@@ -5,8 +5,8 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler')
-var userRoute = require('./routes/user');
-var walletRoute = require('./routes/wallet');
+var passport = require('passport');
+
 
 var app = express();
 var mongoose = require('./lib/mongoose');
@@ -14,18 +14,23 @@ var config = require('./config/config');
 var log = require('./lib/log')(module)
 
 var MongoStore = require('connect-mongo')(session)
+var userRoute = require('./routes/user');
+var walletRoute = require('./routes/wallet');
+var HttpError = require('./error/httpError').HttpError;
+var AuthError = require('./error/authError').AuthError;
+
 // view engine setup
 app.engine('ejs', require('ejs-mate'));
 app.set('views', path.join(__dirname, 'templates'));
 app.set('view engine', 'ejs');
+
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
 });
-var HttpError = require('./error/httpError').HttpError;
-var AuthError = require('./error/authError').AuthError;
-
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -33,16 +38,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+app.use(passport.initialize());
 app.use(require('./middleware/sendHttpError'))
 app.use('/user', userRoute);
 app.use('/wallet', walletRoute);
-app.use(session({
-    secret: 'arhanechka',
-    resave: true,
-    saveUninitialized: true,
-      // maxAge: config.get('session: maxAge'),
-    store: new MongoStore({mongooseConnection: mongoose.connection})
-}));
+// app.use(session({
+//     secret: 'arhanechka',
+//     resave: true,
+//     saveUninitialized: true,
+//       // maxAge: config.get('session: maxAge'),
+//     store: new MongoStore({mongooseConnection: mongoose.connection})
+// }));
 
 app.use(require('./middleware/loadUser'));
 require('./routes')(app);

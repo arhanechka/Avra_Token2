@@ -1,42 +1,83 @@
+var passport = require('passport');
+var config = require('../config/config').get(process.env.NODE_ENV);
+require('../config/passport')(passport);
+var jwt = require('jsonwebtoken');
 var log = require('../lib/log')(module)
 var web3 = require('../lib/web3');
 var Wallet = require('../models/wallet');
 var async = require('async');
+var getToken = require('../lib/token')
 var express = require('express');
 var router = express.Router();
 
-router.post('/wallets', function(req, res, next) {
+router.post('/wallets', passport.authenticate('jwt', {
+    session: false
+}), function (req, res, next) {
     // var userId = req.session.user._id;
-    var userId = req.body.id;
-    log.debug(userId);
-    Wallet.find({userId: userId}, (err, wallets)=>{
-     if(err){
-        res.send({
-            success: false,
-            msg: "No wallets or mistake"
-        })
-         // return next(new HttpError(404, "No existing wallets in database"));
-     } else {
-        log.debug(wallets);
-       //  req.session.wallets = wallets;
-       //  res.json(wallets);
-         res.json({
-             success: true,
-             msg: wallets
-         });
-        //res.render('wallets', {title: 'Avra', address: addresses});
-     }
-    });
+    console.log("In wallet get func")
+    var token = getToken(req.headers);
+    log.debug(token);
+    // if (token) {
+    // if(!req.headers['x-auth']) {
+    //     console.log("!x-auth")
+    //     return res.sendStatus(401)
+    // }
+    // try {
+    //     var token = jwt.decode(req.headers['x-auth'], 'aaaa')
+    //     console.log("!token")
+    //
+    // } catch (err) {
+    //     return res.sendStatus(401)
+    // }
+    // if (token) {
+
+        // verifies secret and checks exp
+        // jwt.verify(token, app.get('superSecret'), function(err, decoded) {
+        //     log.debug(token);
+    // if (token) {
+    //     var userId = req.body.id;
+    //     log.debug(userId);
+    //         if (err) {
+    //             return res.json({ success: false, message: 'Failed to authenticate token.' });
+    //         } else {
+    //             // if everything is good, save to request for use in other routes
+    //             req.decoded = decoded;
+    //             Wallet.find({userId: userId}, (err, wallets) => {
+    //                 if (err) {
+    //                 res.send({
+    //                 success: false,
+    //                 msg: "No wallets or mistake"
+    //             })
+    //             // return next(new HttpError(404, "No existing wallets in database"));
+    //         } else {
+    //             log.debug(wallets);
+    //             //  req.session.wallets = wallets;
+    //             //  res.json(wallets);
+    //             res.json({
+    //                 success: true,
+    //                 msg: wallets,
+    //                 token: token
+    //             });
+    //             //res.render('wallets', {title: 'Avra', address: addresses});
+    //         }
+    //     });
+    // }
+    // else {
+    //     return res.status(403).send({
+    //         success: false,
+    //         msg: 'Unauthorized.'
+    //     });
+   // }
 });
 
-router.post('/newWallet', async function(req, res, next) {
+router.post('/newWallet', async function (req, res, next) {
     // Create and Save a new Wallet
     var userId = req.body.id;
     // var userId = req.session.user._id;
-    log.debug("That is req.session.userId"+ userId);
+    log.debug("That is req.session.userId" + userId);
     // var userPas = req.session.user.hashedPassword;
     var userPas = req.body.pass;
-    log.debug("That is req.session.userPass"+userPas);
+    log.debug("That is req.session.userPass" + userPas);
     var req_public = await web3.eth.personal.newAccount(userPas);
 
     // if(callback) {
@@ -45,14 +86,14 @@ router.post('/newWallet', async function(req, res, next) {
     console.log("req public after " + req_public);
     var req_balance = 0;
     var wallet = new Wallet({userId: userId, public: req_public, balance: req_balance});
-    console.log("created wallet: " +wallet);
-    wallet.save(function(err, data) {
-        if(err) {
+    console.log("created wallet: " + wallet);
+    wallet.save(function (err, data) {
+        if (err) {
             console.log(err);
             return next(new HttpError(500, "Some error ocuured while creating the wallet."));
         } else {
             res.json(data);
-          //  res.render('wallets.ejs')
+            //  res.render('wallets.ejs')
         }
     });
 });

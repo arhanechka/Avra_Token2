@@ -39,8 +39,7 @@ router.post('/signin', function(req, res) {
                 success: true,
                 msg: 'Congratulations! You are in',
                 username: user.name,
-                token: token
-            });
+                token: token            });
         }
         //   res.render('cabinet', { title: 'Avra', user: req.session.user});
 

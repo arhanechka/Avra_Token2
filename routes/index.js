@@ -11,9 +11,9 @@ module.exports = function(app) {
     //filling registration form
     app.post('/registration', require('./registration').post);
     //close the session
-    app.post('/logout', require('./logout').post);
+    //app.post('/logout', require('./logout').post);
     //redirect to cabinet page
-    app.get('/cabinet', require('./cabinet').get);
+  //  app.get('/cabinet', require('./cabinet').get);
    // redirect to wallets page
     app.get('/wallets', require('./wallet').get);
     // create new wallet

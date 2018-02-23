@@ -34,13 +34,14 @@ router.post('/signin', function (req, res) {
             else {
                 log.debug('mistake was not found');
                 log.debug('user found ' +user._id);
-                var payload = user._id.toString();
+                var payload = user.toJSON();
                 console.log("payload "+payload)
                 var token = jwt.sign(payload, config.secret);
+                console.log(token)
                 // return the information including token as JSON
                 res.json({
                     success: true,
-                    msg: 'Congratulations! You are in',
+                    msg: 'Congratulations! You have been logged',
                     username: user.name,
                     token: 'JWT ' + token
                 });

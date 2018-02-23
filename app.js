@@ -16,6 +16,7 @@ var log = require('./lib/log')(module)
 var MongoStore = require('connect-mongo')(session)
 var userRoute = require('./routes/user');
 var walletRoute = require('./routes/wallet');
+var tokenRoute = require('./routes/avratoken');
 var HttpError = require('./error/httpError').HttpError;
 var AuthError = require('./error/authError').AuthError;
 
@@ -45,6 +46,7 @@ app.use(passport.initialize());
 app.use(require('./middleware/sendHttpError'))
 app.use('/user', userRoute);
 app.use('/wallet', walletRoute);
+app.use('/avratoken', tokenRoute);
 // app.use(session({
 //     secret: 'arhanechka',
 //     resave: true,
@@ -54,7 +56,7 @@ app.use('/wallet', walletRoute);
 // }));
 
 app.use(require('./middleware/loadUser'));
-require('./routes')(app);
+//require('./routes')(app);
 
 
 

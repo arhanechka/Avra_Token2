@@ -102,35 +102,3 @@ router.post('/newWallet/:user_id', passport.authenticate('jwt', {
 });
 module.exports = router;
 
-//exports.post = function(req, res, next) {
-//     // Create and Save a new Wallet
-//     var userId = req.session.user._id;
-//     log.debug("That is req.session.userId"+userId);
-//     var userPas = req.session.user.hashedPassword;
-//     log.debug("That is req.session.userPass"+userPas);
-//     async.waterfall([
-//         function (callback) {
-//             console.log('in wallet stage 1')
-//             web3.eth.personal.newAccount(userPas, callback)
-//         },
-//         function (req_public, callback) {
-//             console.log('in wallet stage 2')
-//             if (callback) {
-//                 //TODO make a new mistake type
-//                 return next(new HttpError(500, "Some error ocuured while creating the wallet."));
-//             }
-//             console.log("req public after " + req_public);
-//             //TODO make get balance
-//             var req_balance = 0;
-//             var wallet = new Wallet({userId: userId, public: req_public, balance: req_balance});
-//             console.log("created wallet: " +wallet);
-//             wallet.save(function(err, data) {
-//                 if(err) {
-//                     console.log(err);
-//                     return next(new HttpError(500, "Some error ocuured while creating the wallet."));
-//                 } else {
-//                     res.json(data);}
-//         })}
-//         ], callback);
-// };
-module.exports = router;
